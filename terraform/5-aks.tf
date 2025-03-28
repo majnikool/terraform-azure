@@ -11,15 +11,14 @@ resource "azurerm_role_assignment" "base" {
 }
 
 resource "azurerm_kubernetes_cluster" "this" {
-  name                = "${local.env}-${local.eks_name}"
+  name                = "${local.env}-${local.aks_name}"
   location            = azurerm_resource_group.this.location
   resource_group_name = azurerm_resource_group.this.name
   dns_prefix          = "devaks1"
 
-  kubernetes_version        = local.eks_version
-  automatic_channel_upgrade = "stable"
+  kubernetes_version        = local.aks_version
   private_cluster_enabled   = false
-  node_resource_group       = "${local.resource_group_name}-${local.env}-${local.eks_name}"
+  node_resource_group       = "${local.resource_group_name}-${local.env}-${local.aks_name}"
 
   # It's in Preview
   # api_server_access_profile {
@@ -41,14 +40,11 @@ resource "azurerm_kubernetes_cluster" "this" {
 
   default_node_pool {
     name                 = "general"
-    vm_size              = "Standard_D3_v2"
+    vm_size              = "Standard_B2s"
     vnet_subnet_id       = azurerm_subnet.subnet1.id
-    orchestrator_version = local.eks_version
+    orchestrator_version = local.aks_version
     type                 = "VirtualMachineScaleSets"
-    enable_auto_scaling  = true
     node_count           = 1
-    min_count            = 1
-    max_count            = 10
 
     node_labels = {
       role = "general"

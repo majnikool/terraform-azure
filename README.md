@@ -17,9 +17,10 @@ This guide outlines the process of setting up Rancher on an Azure Kubernetes Ser
 az login
 az account list
 az account set --subscription <id>
+az vm list-sizes --location swedencentral --output table
 terraform init
 terraform apply
-az aks get-credentials --resource-group tutorial --name dev-demo
+az aks get-credentials --resource-group rg-majid --name dev-demo
 ```
 
 ## 2. Obtain a Wildcard SSL Certificate
@@ -122,7 +123,7 @@ helm install rancher rancher-stable/rancher \
   --set ingress.tls.source=secret \
   --set hostname=yourdomain.com \
   --set replicas=1 \
-  --set bootstrapPassword="yourrancherpassword"
+  --set bootstrapPassword=""
 ```
 
 ### Troubleshooting Kubernetes Version Compatibility
@@ -132,8 +133,8 @@ If your Kubernetes version is too recent for the Rancher version:
 1. Download the chart locally:
 
    ```bash
-   helm fetch rancher-stable/rancher --version=v2.8.5
-   tar -xvf rancher-2.8.5.tgz
+   helm fetch rancher-stable/rancher --version=v2.10.3
+   tar -xvf rancher-2.10.3.tgz
    ```
 
 2. Edit `Chart.yaml`:
@@ -152,7 +153,7 @@ If your Kubernetes version is too recent for the Rancher version:
      --set ingress.tls.source=secret \
      --set hostname=yourdomain.com \
      --set replicas=1 \
-     --set bootstrapPassword="yourrancherpassword"
+     --set bootstrapPassword=""
    ```
 
 ## 6. Examples
@@ -216,3 +217,13 @@ az storage blob list -c test --account-name devtest2392919
 kubectl delete -f k8s/5-example
 ```
 
+if destroy of helm releases fail, run:
+```bash
+terraform state rm helm_release.external_nginx
+terraform state rm helm_release.cert_manager
+```
+
+and then re-run terraform:
+```bash
+terraform destroy
+```

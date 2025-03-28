@@ -1,33 +1,29 @@
 resource "azurerm_kubernetes_cluster_node_pool" "spot" {
   name                  = "spot"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.this.id
-  vm_size               = "Standard_DS3_v2"
+  vm_size               = "Standard_D4s_v3"
   vnet_subnet_id        = azurerm_subnet.subnet1.id
-  orchestrator_version  = local.eks_version
+  orchestrator_version  = local.aks_version
   priority              = "Spot"
   spot_max_price        = -1
   eviction_policy       = "Delete"
-
-  enable_auto_scaling = true
-  node_count          = 1
+  auto_scaling_enabled  = true
   min_count           = 1
-  max_count           = 4
+  max_count           = 3
 
-  node_labels = {
-    role                                    = "spot"
-    "kubernetes.azure.com/scalesetpriority" = "spot"
-  }
+#  node_labels = {
+#    role                                    = "spot"
+#    "kubernetes.azure.com/scalesetpriority" = "spot"
+#  }
 
-  node_taints = [
-    "spot:NoSchedule",
-    "kubernetes.azure.com/scalesetpriority=spot:NoSchedule"
-  ]
+#  node_taints = [
+#    "spot:NoSchedule",
+#    "kubernetes.azure.com/scalesetpriority=spot:NoSchedule"
+#  ]
 
   tags = {
     env = local.env
   }
 
-  lifecycle {
-    ignore_changes = [node_count]
-  }
+
 }

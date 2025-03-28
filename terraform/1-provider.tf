@@ -1,16 +1,17 @@
 provider "azurerm" {
   features {}
+  subscription_id = local.subscription_id
 }
 
 terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "3.75.0"
+      version = "4.24.0"
     }
     helm = {
       source  = "hashicorp/helm"
-      version = ">= 2.1.0"
+      version = ">= 2.17.0"
     }
   }
 }
