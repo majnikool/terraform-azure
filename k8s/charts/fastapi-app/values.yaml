@@ -1,0 +1,107 @@
+## FastAPI Application Configuration
+fastapi:
+  replicaCount: 1
+  
+  image:
+    repository: majidni/my-fastapi-app  # You'll need to build and push this to your registry
+    pullPolicy: IfNotPresent
+    tag: "v1.1"
+  
+  imagePullSecrets: []
+  nameOverride: ""
+  fullnameOverride: ""
+  
+  serviceAccount:
+    create: true
+    annotations: {}
+    name: ""
+  
+  podAnnotations: {}
+  podSecurityContext: {}
+  securityContext: {}
+  
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 8000
+  
+  ingress:
+    enabled: true
+    className: ""
+    annotations: {}
+    hosts:
+      - host: app.majtest.uk
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls: []
+  
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: http
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+  
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: http
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+  
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  
+  env:
+    normal:
+      LOG_LEVEL: "INFO"
+    secret:
+      # These will be stored in a Kubernetes Secret
+      DB_USER: "myuser"
+      DB_PASSWORD: "mypassword"
+      DB_NAME: "mydatabase"
+
+## PostgreSQL Configuration
+postgresql:
+  image:
+    repository: postgres
+    tag: "17.4"
+    pullPolicy: IfNotPresent
+  
+  auth:
+    username: "myuser"
+    password: "mypassword"
+    database: "mydatabase"
+    
+  persistence:
+    enabled: true
+    size: 8Gi
+    storageClass: ""
+    
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+      
+  service:
+    type: ClusterIP
+    port: 5432

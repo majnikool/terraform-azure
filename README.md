@@ -81,15 +81,20 @@ kubectl create namespace cattle-system
 
 # Create TLS secret for Rancher ingress
 sudo kubectl -n cattle-system create secret tls tls-rancher-ingress \
-  --cert=/etc/letsencrypt/live/yourdomain.com/fullchain.pem \
-  --key=/etc/letsencrypt/live/yourdomain.com/privkey.pem
+  --cert=/etc/letsencrypt/live/majtest.uk/fullchain.pem \
+  --key=/etc/letsencrypt/live/majtest.uk/privkey.pem
 
 # Create wildcard TLS secret
 sudo kubectl -n ingress create secret tls tls-wildcard \
-  --cert=/etc/letsencrypt/live/yourdomain.com/fullchain.pem \
-  --key=/etc/letsencrypt/live/yourdomain.com/privkey.pem
-```
+  --cert=/etc/letsencrypt/live/majtest.uk/fullchain.pem \
+  --key=/etc/letsencrypt/live/majtest.uk/privkey.pem
 
+
+# Create the same TLS certificate secret in the istio-system namespace
+sudo kubectl -n istio-system create secret tls tls-wildcard \
+  --cert=/etc/letsencrypt/live/majtest.uk/fullchain.pem \
+  --key=/etc/letsencrypt/live/majtest.uk/privkey.pem
+```
 ## 4. Configure DNS
 
 1. Get the ingress service's public IP:
@@ -106,6 +111,11 @@ sudo kubectl -n ingress create secret tls tls-wildcard \
    nslookup yourdomain.com
    ```
 
+also for istio:
+kubectl get svc -n istio-system istio-ingressgateway
+
+then mapp a name like api.majtest.uk to the public ip of istio service
+
 5. Test without changing DNS (replace IP with your ingress IP):
 
    ```bash
@@ -121,7 +131,7 @@ helm repo update
 helm install rancher rancher-stable/rancher \
   --namespace cattle-system \
   --set ingress.tls.source=secret \
-  --set hostname=yourdomain.com \
+  --set hostname=majtest.uk \
   --set replicas=1 \
   --set bootstrapPassword=""
 ```
@@ -151,9 +161,9 @@ If your Kubernetes version is too recent for the Rancher version:
    helm install rancher ./rancher \
      --namespace cattle-system \
      --set ingress.tls.source=secret \
-     --set hostname=yourdomain.com \
+     --set hostname=r2.majtest.uk \
      --set replicas=1 \
-     --set bootstrapPassword=""
+     --set bootstrapPassword="Gaming@6244"
    ```
 
 ## 6. Examples
