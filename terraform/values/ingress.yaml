@@ -1,0 +1,10 @@
+controller:
+  ingressClassResource:
+    name: external-nginx
+    default: true
+  ingressClass: external-nginx  
+  service:
+    annotations:
+      service.beta.kubernetes.io/azure-load-balancer-health-probe-request-path: /healthz
+  extraArgs:
+    default-ssl-certificate: ingress/tls-wildcard 
